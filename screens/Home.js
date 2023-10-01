@@ -65,7 +65,8 @@ const Home = ({navigation: {navigate}}) => {
 
         return () => { // useEffect에서 리턴되는 값은 component가 unmount 되었을 때 실행되는 함수를 리턴한다.
             feelings.removeAllListeners();
-        }
+        };
+        
     },[]);
 
     const onPress = (id) => {
