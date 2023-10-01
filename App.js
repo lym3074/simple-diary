@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import Navigator from './navigators';
 import * as SplashScreen from 'expo-splash-screen';
 import { View } from 'react-native';
+import { DBContext } from './context';
 
 const FeelingSchema = {
   name: "Feeling",
@@ -14,18 +15,20 @@ const FeelingSchema = {
     message: "string"
   },
   primaryKey: "_id"
-}
+};
 
 export default function App() {
   const [ready, setReady] = useState(false);
+  const [realm, setRealm] = useState(null);
 
   async function prepare() {
     try {
-      const realm = await Realm.open({
+      const connection = await Realm.open({
         path: "simpleDiaryDB",
         schema : [FeelingSchema]
       })
-      console.log(realm);
+      setRealm(connection);
+      console.log(connection)
     } catch (e) {
       console.warn(e);
     } finally {
@@ -49,8 +52,10 @@ export default function App() {
   }
 
   return(
-    <NavigationContainer onLayout={onLayoutRootView}>
-      <Navigator />
-    </NavigationContainer>
+    <DBContext.Provider value={realm}>
+      <NavigationContainer onLayout={onLayoutRootView}>
+        <Navigator />
+      </NavigationContainer>
+    </DBContext.Provider>
   )
 }

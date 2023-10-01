@@ -1,7 +1,8 @@
 import styled from "styled-components";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import colors from "../colors";
 import { Alert } from "react-native";
+import { DBContext, useDB } from "../context";
 
 const View = styled.View`
     flex:1;
@@ -60,7 +61,8 @@ const EmotionText = styled.Text`
 
 const emotions = ["😀", "😍", "🥹", "🫠", "🤪", "😊", "🧐"]
 
-const Write = () => {
+const Write = ({navigation: {goBack}}) => {
+    const realm = useDB();
     const [selectedEmotion, setEmotion] = useState(null);
     const [feelings, setFeelings] = useState("");
 
@@ -70,6 +72,15 @@ const Write = () => {
         if(!feelings || !selectedEmotion) {
             return Alert.alert("please complete form")
         }
+
+        realm.write(()=> {
+            realm.create("Feeling", {
+                _id: Date.now(),
+                emotion: selectedEmotion,
+                message: feelings
+            });
+            goBack();
+        })
     }
     return (
         <View>
