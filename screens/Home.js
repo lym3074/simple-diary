@@ -4,6 +4,7 @@ import colors from "../colors";
 import { FlatList, LayoutAnimation, SafeAreaView, TouchableOpacity } from "react-native";
 import {Ionicons} from '@expo/vector-icons'
 import { useDB } from "../context";
+// import { AdMobBanner } from "expo-ads-admob";
 
 const View = styled.View`
     flex: 1;
@@ -81,6 +82,9 @@ const Home = ({navigation: {navigate}}) => {
         <SafeAreaView style={{flex: 1, backgroundColor: colors.bgColor}}>
             <View>
                 <Title>My Diary</Title>
+                {/* <AdMobBanner 
+                    adUnitID="ca-app-pub-3940256099942544/2934735716"
+                /> */}
                 <FlatList
                     data={feelings}
                     keyExtractor={feeling => feeling._id + ""}

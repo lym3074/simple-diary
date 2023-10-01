@@ -4,8 +4,12 @@ import AppLoading from 'expo-app-loading';
 import { NavigationContainer } from '@react-navigation/native';
 import Navigator from './navigators';
 import * as SplashScreen from 'expo-splash-screen';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { DBContext } from './context';
+// import { setTestDeviceIDAsync } from 'expo-ads-admob';
+
+//
+const adId = Platform.select({ios: "a", android: "b"});
 
 const FeelingSchema = {
   name: "Feeling",
@@ -23,6 +27,8 @@ export default function App() {
 
   async function prepare() {
     try {
+      // await setTestDeviceIDAsync('EMULATOR');
+
       const connection = await Realm.open({
         path: "simpleDiaryDB",
         schema : [FeelingSchema]
