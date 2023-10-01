@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import React, { useContext, useEffect, useState } from "react";
 import colors from "../colors";
-import { FlatList, SafeAreaView } from "react-native";
+import { FlatList, LayoutAnimation, SafeAreaView, TouchableOpacity } from "react-native";
 import {Ionicons} from '@expo/vector-icons'
 import { useDB } from "../context";
 
@@ -57,16 +57,24 @@ const Home = ({navigation: {navigate}}) => {
 
     useEffect(()=> {
         const feelings = realm.objects("Feeling");
-        setFeelings(feelings);
-        feelings.addListener(() => {
-            const feelings = realm.objects("Feeling");
-            setFeelings(feelings);
+        feelings.addListener((feelings, changes) => {
+            //LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+            LayoutAnimation.linear()
+            setFeelings(feelings.sorted("_id", true)); // false Asc, true Desc
         });
 
         return () => { // useEffect에서 리턴되는 값은 component가 unmount 되었을 때 실행되는 함수를 리턴한다.
             feelings.removeAllListeners();
         }
-    },[])
+    },[]);
+
+    const onPress = (id) => {
+        realm.write(() => {
+            const targetFeel = realm.objectForPrimaryKey("Feeling", id);
+            realm.delete(targetFeel);
+            
+        })
+    }
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: colors.bgColor}}>
@@ -76,10 +84,12 @@ const Home = ({navigation: {navigate}}) => {
                     data={feelings}
                     keyExtractor={feeling => feeling._id + ""}
                     renderItem={({item}) => (
-                        <Record>
-                            <Emotion>{item.emotion}</Emotion>
-                            <Message>{item.message}</Message>
-                        </Record>
+                        <TouchableOpacity onPress={() => onPress(item._id)}>
+                            <Record>
+                                <Emotion>{item.emotion}</Emotion>
+                                <Message>{item.message}</Message>
+                            </Record>
+                        </TouchableOpacity>
                     )}
                     ItemSeparatorComponent={Separator}
                 />
